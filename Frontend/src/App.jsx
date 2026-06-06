@@ -1,9 +1,10 @@
 import React from 'react'
+import LoginPage from './Pages/Login'
 
 
 const App = () => {
   return (
-    <div>App</div>
+    <Dashboard/>
   )
 }
 
