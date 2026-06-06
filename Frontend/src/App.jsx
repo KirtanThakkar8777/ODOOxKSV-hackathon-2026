@@ -1,11 +1,11 @@
-import React from 'react'
-import LoginPage from './Pages/Login'
+import { Routes, Route } from "react-router-dom";
+import Dashboard from "./Pages/Dashboard";
 
 
-const App = () => {
+export default function AppRoutes() {
   return (
-    <Dashboard/>
-  )
+    <Routes>
+      <Route path="/" element={<Dashboard />} />
+    </Routes>
+  );
 }
-
-export default App
