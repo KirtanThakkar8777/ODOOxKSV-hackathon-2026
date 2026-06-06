@@ -1,18 +1,25 @@
-import { create } from "zustand";
+import { create } from 'zustand';
 
-const useVendorStore = create((set) => ({
+export const useVendorStore = create((set, get) => ({
   vendors: [],
   selectedVendor: null,
-  loading: false,
+  isLoading: false,
+  error: null,
+  stats: null,
 
-  setVendors: (vendors) =>
-    set({ vendors }),
+  setVendors: (vendors) => set({ vendors }),
+  setSelectedVendor: (vendor) => set({ selectedVendor: vendor }),
+  setLoading: (isLoading) => set({ isLoading }),
+  setError: (error) => set({ error }),
+  setStats: (stats) => set({ stats }),
 
-  setSelectedVendor: (vendor) =>
-    set({ selectedVendor: vendor }),
+  addVendor: (vendor) => set((state) => ({ vendors: [...state.vendors, vendor] })),
+  updateVendor: (id, data) => set((state) => ({
+    vendors: state.vendors.map(v => v.id === id ? { ...v, ...data } : v)
+  })),
+  removeVendor: (id) => set((state) => ({
+    vendors: state.vendors.filter(v => v.id !== id)
+  })),
 
-  setLoading: (loading) =>
-    set({ loading }),
+  getVendorById: (id) => get().vendors.find(v => v.id === id),
 }));
-
-export default useVendorStore;

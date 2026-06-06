@@ -1,22 +1,23 @@
-import { create } from "zustand";
+import { create } from 'zustand';
 
-const usePurchaseOrderStore = create((set) => ({
+export const usePurchaseOrderStore = create((set, get) => ({
   purchaseOrders: [],
   selectedPurchaseOrder: null,
-  loading: false,
+  isLoading: false,
+  error: null,
 
-  setPurchaseOrders: (purchaseOrders) =>
-    set({ purchaseOrders }),
+  setPurchaseOrders: (purchaseOrders) => set({ purchaseOrders }),
+  setSelectedPurchaseOrder: (po) => set({ selectedPurchaseOrder: po }),
+  setLoading: (isLoading) => set({ isLoading }),
+  setError: (error) => set({ error }),
 
-  setSelectedPurchaseOrder: (
-    selectedPurchaseOrder
-  ) =>
-    set({
-      selectedPurchaseOrder,
-    }),
+  addPurchaseOrder: (po) => set((state) => ({ purchaseOrders: [...state.purchaseOrders, po] })),
+  updatePurchaseOrder: (id, data) => set((state) => ({
+    purchaseOrders: state.purchaseOrders.map(po => po.id === id ? { ...po, ...data } : po)
+  })),
+  removePurchaseOrder: (id) => set((state) => ({
+    purchaseOrders: state.purchaseOrders.filter(po => po.id !== id)
+  })),
 
-  setLoading: (loading) =>
-    set({ loading }),
+  getPurchaseOrderById: (id) => get().purchaseOrders.find(po => po.id === id),
 }));
-
-export default usePurchaseOrderStore;

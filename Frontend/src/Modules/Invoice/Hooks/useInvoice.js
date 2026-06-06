@@ -1,59 +1,65 @@
-import invoiceService from "../Service/invoice.service";
-import useInvoiceStore from "../store/invoiceStore";
+import { useState, useEffect, useCallback } from 'react';
+import { invoiceAPI } from '../../../services/api';
 
-const useInvoice = () => {
-  const {
-    invoices,
-    setInvoices,
-    loading,
-    setLoading,
-  } = useInvoiceStore();
+export const useInvoice = () => {
+  const [invoices, setInvoices] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const getInvoices = async () => {
+  const fetchInvoices = useCallback(async (params = {}) => {
+    setLoading(true);
+    setError(null);
     try {
-      setLoading(true);
-
-      const data =
-        await invoiceService.getInvoices();
-
-      setInvoices(data);
+      const response = await invoiceAPI.getAll(params);
+      setInvoices(response.data);
+      return response.data;
+    } catch (err) {
+      setError(err.message || 'Failed to fetch invoices');
+      throw err;
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const createInvoice = async (
-    payload
-  ) => {
-    return invoiceService.createInvoice(
-      payload
-    );
-  };
+  const createInvoice = useCallback(async (data) => {
+    try {
+      const response = await invoiceAPI.create(data);
+      setInvoices(prev => [...prev, response.data]);
+      return response.data;
+    } catch (err) {
+      setError(err.message || 'Failed to create invoice');
+      throw err;
+    }
+  }, []);
 
-  const updateInvoice = async (
-    id,
-    payload
-  ) => {
-    return invoiceService.updateInvoice(
-      id,
-      payload
-    );
-  };
+  const updateInvoice = useCallback(async (id, data) => {
+    try {
+      const response = await invoiceAPI.update(id, data);
+      setInvoices(prev => prev.map(i => i.id === id ? response.data : i));
+      return response.data;
+    } catch (err) {
+      setError(err.message || 'Failed to update invoice');
+      throw err;
+    }
+  }, []);
 
-  const deleteInvoice = async (id) => {
-    return invoiceService.deleteInvoice(
-      id
-    );
-  };
+  const deleteInvoice = useCallback(async (id) => {
+    try {
+      await invoiceAPI.delete(id);
+      setInvoices(prev => prev.filter(i => i.id !== id));
+    } catch (err) {
+      setError(err.message || 'Failed to delete invoice');
+      throw err;
+    }
+  }, []);
 
   return {
     invoices,
     loading,
-    getInvoices,
+    error,
+    fetchInvoices,
     createInvoice,
     updateInvoice,
     deleteInvoice,
   };
 };
-
-export default useInvoice;

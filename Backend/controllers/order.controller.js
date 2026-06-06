@@ -44,3 +44,12 @@ export const approveOrder = async (req, res, next) => {
     res.json(order);
   } catch (err) { next(err); }
 };
+
+export const deleteOrder = async (req, res, next) => {
+  try {
+    const order = await PurchaseOrder.findByIdAndDelete(req.params.id);
+    if (!order) return res.status(404).json({ message: 'Purchase order not found' });
+    await ActivityLog.create({ user: req.user.id, action: 'Deleted Purchase Order', entity: 'PurchaseOrder', entityId: order._id });
+    res.json({ message: 'Purchase order deleted' });
+  } catch (err) { next(err); }
+};

@@ -1,18 +1,23 @@
-import { create } from "zustand";
+import { create } from 'zustand';
 
-const useRFQStore = create((set) => ({
+export const useRFQStore = create((set, get) => ({
   rfqs: [],
   selectedRFQ: null,
-  loading: false,
+  isLoading: false,
+  error: null,
 
-  setRFQs: (rfqs) =>
-    set({ rfqs }),
+  setRFQs: (rfqs) => set({ rfqs }),
+  setSelectedRFQ: (rfq) => set({ selectedRFQ: rfq }),
+  setLoading: (isLoading) => set({ isLoading }),
+  setError: (error) => set({ error }),
 
-  setSelectedRFQ: (rfq) =>
-    set({ selectedRFQ: rfq }),
+  addRFQ: (rfq) => set((state) => ({ rfqs: [...state.rfqs, rfq] })),
+  updateRFQ: (id, data) => set((state) => ({
+    rfqs: state.rfqs.map(r => r.id === id ? { ...r, ...data } : r)
+  })),
+  removeRFQ: (id) => set((state) => ({
+    rfqs: state.rfqs.filter(r => r.id !== id)
+  })),
 
-  setLoading: (loading) =>
-    set({ loading }),
+  getRFQById: (id) => get().rfqs.find(r => r.id === id),
 }));
-
-export default useRFQStore;

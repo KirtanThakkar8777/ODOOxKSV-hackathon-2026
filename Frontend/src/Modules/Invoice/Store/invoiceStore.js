@@ -1,22 +1,23 @@
-import { create } from "zustand";
+import { create } from 'zustand';
 
-const useInvoiceStore = create((set) => ({
+export const useInvoiceStore = create((set, get) => ({
   invoices: [],
   selectedInvoice: null,
-  loading: false,
+  isLoading: false,
+  error: null,
 
-  setInvoices: (invoices) =>
-    set({ invoices }),
+  setInvoices: (invoices) => set({ invoices }),
+  setSelectedInvoice: (invoice) => set({ selectedInvoice: invoice }),
+  setLoading: (isLoading) => set({ isLoading }),
+  setError: (error) => set({ error }),
 
-  setSelectedInvoice: (
-    selectedInvoice
-  ) =>
-    set({
-      selectedInvoice,
-    }),
+  addInvoice: (invoice) => set((state) => ({ invoices: [...state.invoices, invoice] })),
+  updateInvoice: (id, data) => set((state) => ({
+    invoices: state.invoices.map(i => i.id === id ? { ...i, ...data } : i)
+  })),
+  removeInvoice: (id) => set((state) => ({
+    invoices: state.invoices.filter(i => i.id !== id)
+  })),
 
-  setLoading: (loading) =>
-    set({ loading }),
+  getInvoiceById: (id) => get().invoices.find(i => i.id === id),
 }));
-
-export default useInvoiceStore;

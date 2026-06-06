@@ -49,3 +49,12 @@ export const sendInvoice = async (req, res, next) => {
     res.json({ message: 'Invoice sent', invoice });
   } catch (err) { next(err); }
 };
+
+export const deleteInvoice = async (req, res, next) => {
+  try {
+    const invoice = await Invoice.findByIdAndDelete(req.params.id);
+    if (!invoice) return res.status(404).json({ message: 'Invoice not found' });
+    await ActivityLog.create({ user: req.user.id, action: 'Deleted Invoice', entity: 'Invoice', entityId: invoice._id });
+    res.json({ message: 'Invoice deleted' });
+  } catch (err) { next(err); }
+};

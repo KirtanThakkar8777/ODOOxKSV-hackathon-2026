@@ -1,61 +1,65 @@
-import vendorService from "../services/vendor.service";
-import useVendorStore from "../store/vendorStore";
+import { useState, useEffect, useCallback } from 'react';
+import { vendorAPI } from '../../../services/api';
 
-const useVendor = () => {
-  const {
-    vendors,
-    setVendors,
-    setLoading,
-    loading,
-  } = useVendorStore();
+export const useVendor = () => {
+  const [vendors, setVendors] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const getVendors = async () => {
+  const fetchVendors = useCallback(async (params = {}) => {
+    setLoading(true);
+    setError(null);
     try {
-      setLoading(true);
-
-      const data =
-        await vendorService.getVendors();
-
-      setVendors(data);
+      const response = await vendorAPI.getAll(params);
+      setVendors(response.data);
+      return response.data;
+    } catch (err) {
+      setError(err.message || 'Failed to fetch vendors');
+      throw err;
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const createVendor = async (
-    payload
-  ) => {
-    return vendorService.createVendor(
-      payload
-    );
-  };
+  const createVendor = useCallback(async (data) => {
+    try {
+      const response = await vendorAPI.create(data);
+      setVendors(prev => [...prev, response.data]);
+      return response.data;
+    } catch (err) {
+      setError(err.message || 'Failed to create vendor');
+      throw err;
+    }
+  }, []);
 
-  const updateVendor = async (
-    id,
-    payload
-  ) => {
-    return vendorService.updateVendor(
-      id,
-      payload
-    );
-  };
+  const updateVendor = useCallback(async (id, data) => {
+    try {
+      const response = await vendorAPI.update(id, data);
+      setVendors(prev => prev.map(v => v.id === id ? response.data : v));
+      return response.data;
+    } catch (err) {
+      setError(err.message || 'Failed to update vendor');
+      throw err;
+    }
+  }, []);
 
-  const deleteVendor = async (
-    id
-  ) => {
-    return vendorService.deleteVendor(
-      id
-    );
-  };
+  const deleteVendor = useCallback(async (id) => {
+    try {
+      await vendorAPI.delete(id);
+      setVendors(prev => prev.filter(v => v.id !== id));
+    } catch (err) {
+      setError(err.message || 'Failed to delete vendor');
+      throw err;
+    }
+  }, []);
 
   return {
     vendors,
     loading,
-    getVendors,
+    error,
+    fetchVendors,
     createVendor,
     updateVendor,
     deleteVendor,
   };
 };
-
-export default useVendor;

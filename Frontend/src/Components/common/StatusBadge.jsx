@@ -1,25 +1,27 @@
-const StatusBadge = ({ status }) => {
-  const colors = {
-    Active: "bg-green-100 text-green-700",
-    Approved: "bg-green-100 text-green-700",
-    Pending: "bg-yellow-100 text-yellow-700",
-    Rejected: "bg-red-100 text-red-700",
-    Draft: "bg-slate-100 text-slate-700",
-    Closed: "bg-blue-100 text-blue-700",
+import React from 'react';
+import { cn } from '../../utils/helpers';
+
+const StatusBadge = ({ status, className = '' }) => {
+  const statusConfig = {
+    pending: { label: 'Pending', className: 'status-pending' },
+    approved: { label: 'Approved', className: 'status-approved' },
+    rejected: { label: 'Rejected', className: 'status-rejected' },
+    completed: { label: 'Completed', className: 'status-completed' },
+    draft: { label: 'Draft', className: 'status-draft' },
+    cancelled: { label: 'Cancelled', className: 'status-rejected' },
+    in_progress: { label: 'In Progress', className: 'status-pending' },
+    active: { label: 'Active', className: 'status-approved' },
+    inactive: { label: 'Inactive', className: 'status-draft' },
+    paid: { label: 'Paid', className: 'status-approved' },
+    unpaid: { label: 'Unpaid', className: 'status-pending' },
+    overdue: { label: 'Overdue', className: 'status-rejected' },
   };
 
+  const config = statusConfig[status?.toLowerCase()] || { label: status, className: 'status-draft' };
+
   return (
-    <span
-      className={`
-      px-3
-      py-1
-      rounded-full
-      text-xs
-      font-medium
-      ${colors[status] || colors.Draft}
-      `}
-    >
-      {status}
+    <span className={cn('status-badge', config.className, className)}>
+      {config.label}
     </span>
   );
 };

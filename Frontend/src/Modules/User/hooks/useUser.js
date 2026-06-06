@@ -1,67 +1,65 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from 'react';
+import { userAPI } from '../../../services/api';
 
-import userService from "../Service/user.service";
-import useUserStore from "../store/userStore";
+export const useUser = () => {
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-const useUser = () => {
-  const {
-    setUser,
-    setToken,
-    setLoading,
-  } = useUserStore();
-
-  const [error, setError] =
-    useState(null);
-
-  const login = async (payload) => {
+  const fetchUsers = useCallback(async (params = {}) => {
+    setLoading(true);
+    setError(null);
     try {
-      setLoading(true);
-
-      const data =
-        await userService.login(payload);
-
-      setUser(data.user);
-
-      setToken(data.token);
-
-      return data;
+      const response = await userAPI.getAll(params);
+      setUsers(response.data);
+      return response.data;
     } catch (err) {
-      setError(
-        err.response?.data?.message ||
-          "Login Failed"
-      );
+      setError(err.message || 'Failed to fetch users');
+      throw err;
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const register = async (
-    payload
-  ) => {
+  const createUser = useCallback(async (data) => {
     try {
-      setLoading(true);
-
-      const data =
-        await userService.register(
-          payload
-        );
-
-      return data;
+      const response = await userAPI.create(data);
+      setUsers(prev => [...prev, response.data]);
+      return response.data;
     } catch (err) {
-      setError(
-        err.response?.data?.message ||
-          "Registration Failed"
-      );
-    } finally {
-      setLoading(false);
+      setError(err.message || 'Failed to create user');
+      throw err;
     }
-  };
+  }, []);
+
+  const updateUser = useCallback(async (id, data) => {
+    try {
+      const response = await userAPI.update(id, data);
+      setUsers(prev => prev.map(u => u.id === id ? response.data : u));
+      return response.data;
+    } catch (err) {
+      setError(err.message || 'Failed to update user');
+      throw err;
+    }
+  }, []);
+
+  const deleteUser = useCallback(async (id) => {
+    try {
+      await userAPI.delete(id);
+      setUsers(prev => prev.filter(u => u.id !== id));
+    } catch (err) {
+      setError(err.message || 'Failed to delete user');
+      throw err;
+    }
+  }, []);
 
   return {
-    login,
-    register,
+    users,
+    loading,
     error,
+    fetchUsers,
+    createUser,
+    updateUser,
+    deleteUser,
   };
 };
-
-export default useUser;

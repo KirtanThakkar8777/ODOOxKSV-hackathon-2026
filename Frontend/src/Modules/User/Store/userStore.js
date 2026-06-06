@@ -1,36 +1,23 @@
-import { create } from "zustand";
+import { create } from 'zustand';
 
-const useUserStore = create((set) => ({
-  user: null,
-  token: localStorage.getItem("token") || null,
-  loading: false,
+export const useUserStore = create((set, get) => ({
+  users: [],
+  currentUser: null,
+  isLoading: false,
+  error: null,
 
-  setUser: (user) =>
-    set({
-      user,
-    }),
+  setUsers: (users) => set({ users }),
+  setCurrentUser: (user) => set({ currentUser: user }),
+  setLoading: (isLoading) => set({ isLoading }),
+  setError: (error) => set({ error }),
 
-  setToken: (token) => {
-    localStorage.setItem("token", token);
+  addUser: (user) => set((state) => ({ users: [...state.users, user] })),
+  updateUser: (id, data) => set((state) => ({
+    users: state.users.map(u => u.id === id ? { ...u, ...data } : u)
+  })),
+  removeUser: (id) => set((state) => ({
+    users: state.users.filter(u => u.id !== id)
+  })),
 
-    set({
-      token,
-    });
-  },
-
-  logout: () => {
-    localStorage.removeItem("token");
-
-    set({
-      user: null,
-      token: null,
-    });
-  },
-
-  setLoading: (loading) =>
-    set({
-      loading,
-    }),
+  getUserById: (id) => get().users.find(u => u.id === id),
 }));
-
-export default useUserStore;

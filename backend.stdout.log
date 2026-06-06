@@ -1,0 +1,7 @@
+
+> backend@1.0.0 start
+> node src/server.js
+
+◇ injected env (3) from .env // tip: ⌘ override existing { override: true }
+Server Running on Port: 5001
+MongoDB Connected: ac-buhnbf4-shard-00-00.agr7g0c.mongodb.net

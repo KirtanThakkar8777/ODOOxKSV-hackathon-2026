@@ -1,47 +1,10 @@
-import api from "../../../services/api";
+import api from '../../../services/api';
 
-const rfqService = {
-  getRFQs: async () => {
-    const response = await api.get("/rfqs");
-    return response.data;
-  },
-
-  getRFQById: async (id) => {
-    const response = await api.get(
-      `/rfqs/${id}`
-    );
-
-    return response.data;
-  },
-
-  createRFQ: async (payload) => {
-    const response = await api.post(
-      "/rfqs",
-      payload
-    );
-
-    return response.data;
-  },
-
-  updateRFQ: async (
-    id,
-    payload
-  ) => {
-    const response = await api.put(
-      `/rfqs/${id}`,
-      payload
-    );
-
-    return response.data;
-  },
-
-  deleteRFQ: async (id) => {
-    const response = await api.delete(
-      `/rfqs/${id}`
-    );
-
-    return response.data;
-  },
+export const rfqService = {
+  getAll: (params) => api.get('/rfqs', { params }),
+  getById: (id) => api.get(`/rfqs/${id}`),
+  create: (data) => api.post('/rfqs', data),
+  update: (id, data) => api.put(`/rfqs/${id}`, data),
+  delete: () => Promise.reject(new Error('RFQ delete is not available in the current backend API')),
+  updateStatus: (id, status) => api.put(`/rfqs/${id}`, { status }),
 };
-
-export default rfqService;

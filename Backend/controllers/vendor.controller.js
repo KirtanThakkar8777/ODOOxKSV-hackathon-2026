@@ -1,4 +1,4 @@
-import Vendor from '../models/Vendor.js';
+import Vendor from '../models/vendor.js';
 import ActivityLog from '../models/ActivityLog.js';
 
 export const getVendors = async (req, res, next) => {

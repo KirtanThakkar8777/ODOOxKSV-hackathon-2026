@@ -1,56 +1,17 @@
-import api from "../../../services/api";
+import api from '../../../services/api';
 
-const purchaseOrderService = {
-  getPurchaseOrders: async () => {
-    const response = await api.get(
-      "/purchase-orders"
-    );
-
-    return response.data;
+export const purchaseOrderService = {
+  getAll: (params) => api.get('/orders', { params }),
+  getById: async (id) => {
+    const response = await api.get('/orders');
+    return {
+      ...response,
+      data: response.data.find((order) => order._id === id || order.id === id),
+    };
   },
-
-  getPurchaseOrderById: async (
-    id
-  ) => {
-    const response = await api.get(
-      `/purchase-orders/${id}`
-    );
-
-    return response.data;
-  },
-
-  createPurchaseOrder: async (
-    payload
-  ) => {
-    const response = await api.post(
-      "/purchase-orders",
-      payload
-    );
-
-    return response.data;
-  },
-
-  updatePurchaseOrder: async (
-    id,
-    payload
-  ) => {
-    const response = await api.put(
-      `/purchase-orders/${id}`,
-      payload
-    );
-
-    return response.data;
-  },
-
-  deletePurchaseOrder: async (
-    id
-  ) => {
-    const response = await api.delete(
-      `/purchase-orders/${id}`
-    );
-
-    return response.data;
-  },
+  create: (data) => api.post('/orders', data),
+  update: (id, data) => api.put(`/orders/${id}/approve`, data),
+  delete: () => Promise.reject(new Error('Purchase order delete is not available in the current backend API')),
+  approve: (id, data) => api.put(`/orders/${id}/approve`, data),
+  updateStatus: (id, status, remarks = '') => api.put(`/orders/${id}/approve`, { status, remarks }),
 };
-
-export default purchaseOrderService;
