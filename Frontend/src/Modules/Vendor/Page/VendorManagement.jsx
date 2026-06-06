@@ -1,74 +1,44 @@
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-import DashboardLayout from "@/layouts/DashboardLayout";
+import Header from "../../../components/layout/Header";
+import Button from "../../../components/common/Button";
 
-import VendorStats from "../components/VendorStats";
 import VendorTable from "../components/VendorTable";
-import VendorDrawer from "../components/VendorDrawer";
+import useVendor from "../hooks/useVendor";
 
-import {
-  getVendors,
-} from "../services/vendor.service";
+const VendorManagement = () => {
+  const navigate = useNavigate();
 
-import useVendorStore from "../store/vendorStore";
-
-export default function VendorManagement() {
   const {
     vendors,
-    selectedVendor,
-    setSelectedVendor,
-    setVendors,
-  } = useVendorStore();
+    getVendors,
+  } = useVendor();
 
   useEffect(() => {
-    loadVendors();
+    getVendors();
   }, []);
 
-  const loadVendors = async () => {
-    const response =
-      await getVendors();
-
-    setVendors(response.data);
-  };
-
   return (
-    <DashboardLayout>
+    <div>
+      <Header
+        title="Vendor Management"
+        subtitle="Manage vendor onboarding and approvals"
+      />
 
-      <div className="space-y-6">
-
-        <h1 className="text-3xl font-bold">
-          Vendor Management
-        </h1>
-
-        <VendorStats
-          total={vendors.length}
-          active={
-            vendors.filter(
-              (v) => v.status === "Active"
-            ).length
+      <div className="mb-4">
+        <Button
+          onClick={() =>
+            navigate("/vendors/add")
           }
-          inactive={
-            vendors.filter(
-              (v) =>
-                v.status === "Inactive"
-            ).length
-          }
-        />
-
-        <VendorTable
-          vendors={vendors}
-          onView={setSelectedVendor}
-        />
-
-        <VendorDrawer
-          vendor={selectedVendor}
-          onClose={() =>
-            setSelectedVendor(null)
-          }
-        />
-
+        >
+          Add Vendor
+        </Button>
       </div>
 
-    </DashboardLayout>
+      <VendorTable vendors={vendors} />
+    </div>
   );
-}
+};
+
+export default VendorManagement;

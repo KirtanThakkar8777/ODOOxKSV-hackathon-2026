@@ -5,14 +5,14 @@ const useVendorStore = create((set) => ({
   selectedVendor: null,
   loading: false,
 
-  setLoading: (value) =>
-    set({ loading: value }),
-
   setVendors: (vendors) =>
     set({ vendors }),
 
   setSelectedVendor: (vendor) =>
     set({ selectedVendor: vendor }),
+
+  setLoading: (loading) =>
+    set({ loading }),
 }));
 
 export default useVendorStore;

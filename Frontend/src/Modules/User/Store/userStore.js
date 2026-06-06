@@ -2,26 +2,34 @@ import { create } from "zustand";
 
 const useUserStore = create((set) => ({
   user: null,
-  token: localStorage.getItem("token"),
+  token: localStorage.getItem("token") || null,
+  loading: false,
 
-  login: (user, token) =>
-    set(() => {
-      localStorage.setItem("token", token);
-
-      return {
-        user,
-        token,
-      };
+  setUser: (user) =>
+    set({
+      user,
     }),
 
-  logout: () =>
-    set(() => {
-      localStorage.removeItem("token");
+  setToken: (token) => {
+    localStorage.setItem("token", token);
 
-      return {
-        user: null,
-        token: null,
-      };
+    set({
+      token,
+    });
+  },
+
+  logout: () => {
+    localStorage.removeItem("token");
+
+    set({
+      user: null,
+      token: null,
+    });
+  },
+
+  setLoading: (loading) =>
+    set({
+      loading,
     }),
 }));
 

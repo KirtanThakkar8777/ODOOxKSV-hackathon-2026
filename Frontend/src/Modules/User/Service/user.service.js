@@ -1,19 +1,37 @@
-import api from "@/services/api";
+import api from "../../../services/api";
 
-export const getUsers = () =>
-  api.get("/users");
+const userService = {
+  login: async (payload) => {
+    const response = await api.post(
+      "/auth/login",
+      payload
+    );
 
-export const getUserById = (id) =>
-  api.get(`/users/${id}`);
+    return response.data;
+  },
 
-export const createUser = (payload) =>
-  api.post("/users", payload);
+  register: async (payload) => {
+    const response = await api.post(
+      "/auth/register",
+      payload
+    );
 
-export const updateUser = (id, payload) =>
-  api.put(`/users/${id}`, payload);
+    return response.data;
+  },
 
-export const deleteUser = (id) =>
-  api.delete(`/users/${id}`);
+  getProfile: async () => {
+    const response = await api.get(
+      "/auth/profile"
+    );
 
-export const loginUser = (payload) =>
-  api.post("/auth/login", payload);
+    return response.data;
+  },
+
+  getUsers: async () => {
+    const response = await api.get("/users");
+
+    return response.data;
+  },
+};
+
+export default userService;

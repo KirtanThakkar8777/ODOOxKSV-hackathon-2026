@@ -1,104 +1,171 @@
+import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
-  Users,
   Building2,
   FileText,
-  Receipt,
+  FileSpreadsheet,
   ShoppingCart,
+  Receipt,
   Activity,
   BarChart3,
+  Bell,
+  Settings,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
-import {
-  NavLink,
-} from "react-router-dom";
+import { useState } from "react";
 
-const menus = [
-  {
-    title: "Dashboard",
-    icon: LayoutDashboard,
-    path: "/",
-  },
-  {
-    title: "Users",
-    icon: Users,
-    path: "/users",
-  },
-  {
-    title: "Vendors",
-    icon: Building2,
-    path: "/vendors",
-  },
-  {
-    title: "RFQ",
-    icon: FileText,
-    path: "/rfq",
-  },
-  {
-    title: "Quotations",
-    icon: Receipt,
-    path: "/quotations",
-  },
-  {
-    title: "Purchase Orders",
-    icon: ShoppingCart,
-    path: "/purchase-orders",
-  },
-  {
-    title: "Invoices",
-    icon: Receipt,
-    path: "/invoices",
-  },
-  {
-    title: "Activity Logs",
-    icon: Activity,
-    path: "/activity-logs",
-  },
-  {
-    title: "Reports",
-    icon: BarChart3,
-    path: "/reports",
-  },
-];
+const Sidebar = () => {
+  const [collapsed, setCollapsed] = useState(false);
 
-export default function Sidebar() {
+  const menuItems = [
+    {
+      name: "Dashboard",
+      path: "/",
+      icon: <LayoutDashboard size={20} />,
+    },
+    {
+      name: "Vendors",
+      path: "/vendors",
+      icon: <Building2 size={20} />,
+    },
+    {
+      name: "RFQs",
+      path: "/rfqs",
+      icon: <FileText size={20} />,
+    },
+    {
+      name: "Quotations",
+      path: "/quotations",
+      icon: <FileSpreadsheet size={20} />,
+    },
+    {
+      name: "Purchase Orders",
+      path: "/purchase-orders",
+      icon: <ShoppingCart size={20} />,
+    },
+    {
+      name: "Invoices",
+      path: "/invoices",
+      icon: <Receipt size={20} />,
+    },
+    {
+      name: "Activity Logs",
+      path: "/activity-logs",
+      icon: <Activity size={20} />,
+    },
+    {
+      name: "Reports",
+      path: "/reports",
+      icon: <BarChart3 size={20} />,
+    },
+    {
+      name: "Notifications",
+      path: "/notifications",
+      icon: <Bell size={20} />,
+    },
+    {
+      name: "Settings",
+      path: "/settings",
+      icon: <Settings size={20} />,
+    },
+  ];
+
   return (
-    <aside className="w-72 bg-white border-r">
+    <aside
+      className={`
+      bg-slate-950
+      text-white
+      border-r
+      border-slate-800
+      transition-all
+      duration-300
+      ${collapsed ? "w-20" : "w-72"}
+      `}
+    >
+      <div className="h-full flex flex-col">
+        <div className="h-16 border-b border-slate-800 flex items-center justify-between px-4">
+          {!collapsed && (
+            <div>
+              <h2 className="font-bold text-lg">
+                VendorBridge
+              </h2>
 
-      <div className="p-6 border-b">
+              <p className="text-xs text-slate-400">
+                Procurement System
+              </p>
+            </div>
+          )}
 
-        <h1 className="text-2xl font-bold">
-          VendorBridge
-        </h1>
+          <button
+            onClick={() =>
+              setCollapsed(!collapsed)
+            }
+            className="
+            p-2
+            rounded-lg
+            hover:bg-slate-800
+            "
+          >
+            {collapsed ? (
+              <ChevronRight size={18} />
+            ) : (
+              <ChevronLeft size={18} />
+            )}
+          </button>
+        </div>
 
-      </div>
-
-      <nav className="p-4 space-y-2">
-
-        {menus.map((menu) => {
-          const Icon = menu.icon;
-
-          return (
+        <nav className="flex-1 p-3 overflow-y-auto">
+          {menuItems.map((item) => (
             <NavLink
-              key={menu.path}
-              to={menu.path}
+              key={item.path}
+              to={item.path}
               className={({ isActive }) =>
-                `flex items-center gap-3 p-3 rounded-lg ${
+                `
+                flex
+                items-center
+                gap-3
+                px-3
+                py-3
+                rounded-xl
+                mb-2
+                transition
+                ${
                   isActive
                     ? "bg-blue-600 text-white"
-                    : "hover:bg-slate-100"
-                }`
+                    : "hover:bg-slate-800"
+                }
+                `
               }
             >
-              <Icon size={18} />
+              {item.icon}
 
-              {menu.title}
+              {!collapsed && (
+                <span>{item.name}</span>
+              )}
             </NavLink>
-          );
-        })}
+          ))}
+        </nav>
 
-      </nav>
+        <div className="p-4 border-t border-slate-800">
+          {!collapsed ? (
+            <div>
+              <p className="font-medium">
+                Procurement Admin
+              </p>
 
+              <p className="text-xs text-slate-400">
+                admin@vendorbridge.com
+              </p>
+            </div>
+          ) : (
+            <div className="w-10 h-10 rounded-full bg-blue-600 mx-auto" />
+          )}
+        </div>
+      </div>
     </aside>
   );
-}
+};
+
+export default Sidebar;

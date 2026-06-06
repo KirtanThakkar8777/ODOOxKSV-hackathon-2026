@@ -1,36 +1,37 @@
 import { useNavigate } from "react-router-dom";
-import DashboardLayout from "@/layouts/DashboardLayout";
+
+import Header from "../../../components/layout/Header";
 
 import VendorForm from "../components/VendorForm";
-import { createVendor } from "../services/vendor.service";
+import useVendor from "../hooks/useVendor";
 
-export default function AddVendor() {
+const AddVendor = () => {
   const navigate = useNavigate();
 
-  const handleSubmit = async (data) => {
-    try {
-      await createVendor({
-        ...data,
-        status: "Active",
-      });
+  const { createVendor } =
+    useVendor();
+
+  const handleSubmit =
+    async (data) => {
+      await createVendor(data);
 
       navigate("/vendors");
-    } catch (error) {
-      console.error(error);
-    }
-  };
+    };
 
   return (
-    <DashboardLayout>
-      <div className="max-w-4xl mx-auto bg-white p-6 rounded-xl border">
-        <h1 className="text-2xl font-bold mb-6">
-          Add Vendor
-        </h1>
+    <div>
+      <Header
+        title="Add Vendor"
+        subtitle="Create new vendor profile"
+      />
 
+      <div className="bg-white p-6 rounded-xl">
         <VendorForm
           onSubmit={handleSubmit}
         />
       </div>
-    </DashboardLayout>
+    </div>
   );
-}
+};
+
+export default AddVendor;

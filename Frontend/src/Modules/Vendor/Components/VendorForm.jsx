@@ -1,54 +1,93 @@
-import { useForm } from "react-hook-form";
+import { useState } from "react";
 
-export default function VendorForm({
+import Input from "../../../components/common/Input";
+import Button from "../../../components/common/Button";
+
+const VendorForm = ({
+  initialValues,
   onSubmit,
-  defaultValues,
-}) {
-  const { register, handleSubmit } =
-    useForm({
-      defaultValues,
+}) => {
+  const [form, setForm] = useState(
+    initialValues || {
+      companyName: "",
+      contactPerson: "",
+      email: "",
+      phone: "",
+      address: "",
+      category: "",
+      status: "Pending",
+    }
+  );
+
+  const handleChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]:
+        e.target.value,
     });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    onSubmit(form);
+  };
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit}
       className="space-y-4"
     >
-      <input
-        {...register("companyName")}
-        placeholder="Company Name"
-        className="w-full border rounded-lg p-3"
+      <Input
+        label="Company Name"
+        name="companyName"
+        value={form.companyName}
+        onChange={handleChange}
       />
 
-      <input
-        {...register("contactPerson")}
-        placeholder="Contact Person"
-        className="w-full border rounded-lg p-3"
+      <Input
+        label="Contact Person"
+        name="contactPerson"
+        value={form.contactPerson}
+        onChange={handleChange}
       />
 
-      <input
-        {...register("email")}
-        placeholder="Email"
-        className="w-full border rounded-lg p-3"
+      <Input
+        label="Email"
+        name="email"
+        value={form.email}
+        onChange={handleChange}
       />
 
-      <input
-        {...register("phone")}
-        placeholder="Phone"
-        className="w-full border rounded-lg p-3"
+      <Input
+        label="Phone"
+        name="phone"
+        value={form.phone}
+        onChange={handleChange}
       />
 
-      <input
-        {...register("gstNumber")}
-        placeholder="GST Number"
-        className="w-full border rounded-lg p-3"
+      <Input
+        label="Address"
+        name="address"
+        value={form.address}
+        onChange={handleChange}
       />
 
-      <button
-        className="bg-blue-600 text-white px-5 py-3 rounded-lg"
+      <Input
+        label="Category"
+        name="category"
+        value={form.category}
+        onChange={handleChange}
+      />
+
+      <Button
+        type="submit"
+        className="w-full"
       >
         Save Vendor
-      </button>
+      </Button>
     </form>
   );
-}
+};
+
+export default VendorForm;
